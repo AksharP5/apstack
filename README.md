@@ -1,35 +1,68 @@
 # apstack
 
-Agent skills I use every day for writing code and contributing to open source.
+Agent skills I use every day for writing code and contributing to open source. They work with Claude Code, Codex, Cursor and any other agent that loads `SKILL.md` folders.
 
-## Skills
-
-- [code-with-restraint](skills/code-with-restraint/SKILL.md) is how I want agents to write production code. The normal path reads top to bottom, input gets parsed once at the edge, and every new layer has to earn its place.
-- [find-issues](skills/find-issues/SKILL.md) hunts a repo for real bugs and performance wins that nobody has reported or claimed yet. It reproduces each one and proves a fix, then hands back the evidence. It never files anything.
-- [find-issues-make-pr](skills/find-issues-make-pr/SKILL.md) runs find-issues and then publishes. For each verified problem it opens an issue and a PR with before/after proof. Every fix goes through code-with-restraint.
-
-The skills link to each other, so install all three side by side. find-issues-make-pr won't work without the other two.
+[![skills.sh](https://skills.sh/b/AksharP5/apstack)](https://skills.sh/AksharP5/apstack)
 
 ## Install
 
-Each skill is a folder with a `SKILL.md`. Put the folders where your agent looks for skills.
+```sh
+npx skills add AksharP5/apstack
+```
 
-Claude Code reads `~/.claude/skills/`. Copy them in:
+This uses the [`skills`](https://skills.sh) CLI. It asks which agents to install to and whether to install for this project or for your user, then installs all three skills.
+
+To install for your user in Claude Code without the prompts:
+
+```sh
+npx skills add AksharP5/apstack -g -a claude-code -y
+```
+
+Useful flags:
+
+| Flag | What it does |
+|---|---|
+| `-l`, `--list` | Show the skills without installing |
+| `-a <agent>` | Pick the agent: `claude-code`, `codex`, `cursor`, or `'*'` for all |
+| `-g` | Install for your user instead of the current project |
+| `-s <name>` | Install only some skills |
+| `-y` | Skip the prompts |
+
+Install all three together. The skills link to each other, and find-issues-make-pr won't work without the other two.
+
+To pull the latest versions later:
+
+```sh
+npx skills update
+```
+
+### By hand
+
+Clone the repo and copy the skill folders to where your agent looks for skills. For Claude Code:
 
 ```sh
 git clone https://github.com/AksharP5/apstack.git
+mkdir -p ~/.claude/skills
 cp -r apstack/skills/* ~/.claude/skills/
 ```
 
-Or symlink them, so a `git pull` updates them:
+To have `git pull` update them, symlink instead of copying:
 
 ```sh
 for s in apstack/skills/*; do ln -s "$PWD/$s" ~/.claude/skills/; done
 ```
 
-Codex works the same way with `~/.codex/skills/`. The `agents/openai.yaml` files hold Codex's display names. Any other agent that reads `SKILL.md` folders should work too, just point it at its own skills directory.
+Codex reads `~/.codex/skills/` the same way. The `agents/openai.yaml` files hold Codex's display names.
 
-Once they're installed, ask for one by name, like "use find-issues on this repo".
+## Skills
+
+| Skill | What it does |
+|---|---|
+| [`code-with-restraint`](skills/code-with-restraint/SKILL.md) | How I want agents to write production code. The normal path reads top to bottom, input gets parsed once at the edge, and every new layer has to earn its place. |
+| [`find-issues`](skills/find-issues/SKILL.md) | Hunts a repo for real bugs and performance wins that nobody has reported or claimed yet. It reproduces each one and proves a fix, then hands back the evidence. It never files anything. |
+| [`find-issues-make-pr`](skills/find-issues-make-pr/SKILL.md) | Runs find-issues and then publishes. For each verified problem it opens an issue and a PR with before/after proof. Every fix goes through code-with-restraint. |
+
+Once installed, agents pick a skill from its description. You can also ask for one by name, like "use find-issues on this repo", or call it directly in Claude Code with `/find-issues`.
 
 ## Credit
 
